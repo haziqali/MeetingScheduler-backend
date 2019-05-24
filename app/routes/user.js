@@ -9,9 +9,7 @@ module.exports.setRouter = (app) => {
     let baseUrl = `${appConfig.apiVersion}/users`;
 
 
-    app.get(`${baseUrl}/view/all`, auth.isAuthorized, userController.getAllUser);
-
-    app.post(`${baseUrl}/findUsers`, auth.isAuthorized, userController.findUsers);
+    app.post(`${baseUrl}/view/all`, auth.isAuthorized, userController.getAllUser);
 
 
     // params: userId.

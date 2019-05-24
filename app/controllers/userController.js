@@ -18,7 +18,7 @@ const UserModel = mongoose.model('User');
 
 /* Get all user Details */
 let getAllUser = (req, res) => {
-    UserModel.find()
+    UserModel.find({ userName: {$not: /.*admin$/} })
         .select(' -__v -_id')
         .lean()
         .exec((err, result) => {
@@ -38,32 +38,10 @@ let getAllUser = (req, res) => {
         })
 }// end get all users
 
-let findUsers = (req, res) => {
-    console.log(`${req.body.term}.*`);
-    UserModel.find({ email: { $regex: `${req.body.term}.*`} })
-        .select(' -__v -_id')
-        .lean()
-        .exec((err, result) => {
-            if (err) {
-                console.log(err)
-                logger.error(err.message, 'User Controller: findUsers', 10)
-                let apiResponse = response.generate(true, 'Failed To Find User Details', 500, null)
-                res.send(apiResponse)
-            } else if (check.isEmpty(result)) {
-                logger.info('No User Found', 'User Controller: getAllUser')
-                let apiResponse = response.generate(true, 'No User Found', 404, null)
-                res.send(apiResponse)
-            } else {
-                console.log(result)
-                let apiResponse = response.generate(false, 'User Details Found', 200, result)
-                res.send(result);
-            }
-        })
-}
 
 /* Get single user details */
 let getSingleUser = (req, res) => {
-    UserModel.findOne({ 'email': req.body.email})
+    UserModel.findOne({ 'userName': req.body.userName} )
         .select('-password -__v -_id')
         .lean()
         .exec((err, result) => {
@@ -151,6 +129,9 @@ let signUpFunction = (req, res) => {
                 } else if (check.isEmpty(req.body.password)) {
                     let apiResponse = response.generate(true, '"password" parameter is missing"', 400, null)
                     reject(apiResponse)
+                } else if (check.isEmpty(req.body.userName)) {
+                    let apiResponse = response.generate(true, '"user name" parameter is missing"', 400, null)
+                    reject(apiResponse)
                 } else {
                     resolve(req)
                 }
@@ -163,21 +144,21 @@ let signUpFunction = (req, res) => {
     }// end validate user input
     let createUser = () => {
         return new Promise((resolve, reject) => {
-            UserModel.findOne({ email: req.body.email })
+            UserModel.findOne({"$or": [{ email: req.body.email}, {userName: req.body.userName }]})
                 .exec((err, retrievedUserDetails) => {
                     if (err) {
                         logger.error(err.message, 'userController: createUser', 10)
-                        let apiResponse = response.generate(true, 'Failed To Create User', 500, null)
+                        let apiResponse = response.generate(true, 'Email or userName already exists', 500, null)
                         reject(apiResponse)
                     } else if (check.isEmpty(retrievedUserDetails)) {
                         let newUser = new UserModel({
                             userId: shortid.generate(),
-                            firstName: req.body.firstName,
-                            lastName: req.body.lastName || '',
+                            userName: req.body.userName,
                             email: req.body.email.toLowerCase(),
                             mobileNumber: req.body.mobile,
                             password: passwordLib.hashpassword(req.body.password),
-                            createdOn: time.now()
+                            createdOn: time.now(),
+                            role: req.body.role
                         })
                         newUser.save((err, newUser) => {
                             if (err) {
@@ -388,7 +369,6 @@ module.exports = {
 
     signUpFunction: signUpFunction,
     getAllUser: getAllUser,
-    findUsers: findUsers,
     editUser: editUser,
     deleteUser: deleteUser,
     getSingleUser: getSingleUser,

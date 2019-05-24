@@ -11,14 +11,11 @@ let userSchema = new Schema({
     default: '',
     unique: true
   },
-  firstName: {
+  userName: {
     type: String,
-    default: ''
+    default: '',
   },
-  lastName: {
-    type: String,
-    default: ''
-  },
+
   password: {
     type: String,
     default: ''
@@ -34,7 +31,11 @@ let userSchema = new Schema({
   },
   createdOn :{
     type:Date,
-    default:""
+    default:''
+  },
+  role: {
+    type: String,
+    default:''
   },
   resetPasswordToken: {
     type: String,
@@ -44,20 +45,21 @@ let userSchema = new Schema({
     type: String,
     default: ''
   },
-  friendRequests: [{
-    _id: String,
-    email: String,
-    firstName: String,
-    lastName: String
-  }],
-  friends: [{
-    _id: String,
-    email: String,
-    firstName: String,
-    lastName: String
-  }]
-
-
+  events: 
+  [
+    {
+      createdBy: String,
+      start: Date,
+      end: Date,
+      title: String,
+      description: String,
+      resizable: {
+        beforeStart: Boolean,
+        afterEnd: Boolean
+      },
+      draggable: Boolean
+    } 
+  ]
 })
 
 
