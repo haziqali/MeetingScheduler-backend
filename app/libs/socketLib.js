@@ -54,7 +54,7 @@ let setServer = (server) => {
         });
 
         socket.on('update-event',(data, userName) => {    
-            console.log("socket event: update-event");
+            console.log(`${userName}`+"socket event: update-event");
             socket.to(`${userName}`).broadcast.emit('event-updated',`Hi ${userName}! Meeting ${data.title} has been updated by ${socket.userName}`);                           
         });
 
