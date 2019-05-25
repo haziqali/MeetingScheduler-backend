@@ -52,7 +52,7 @@ let forgot_password = function(req, res) {
             from: 'todolistmanagement@yahoo.com',
             to: user.email,
             subject: 'Reset Password for List Management',
-            text: 'Hi ' + user.firstName + ' ! \n\n You are receiving this because you have requested the reset of the password for your account.\n\n' +
+            text: 'Hi ' + user.userName + ' ! \n\n You are receiving this because you have requested the reset of the password for your account.\n\n' +
             'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
             'http://' + url + '/resetpassword/' + token + '\n\n' +
             'If you did not request this, please ignore this email and your password will remain unchanged.\n'
@@ -98,7 +98,7 @@ let forgot_password = function(req, res) {
                 to: user.email,
                 from: 'todolistmanagement@yahoo.com',
                 subject: 'Password Reset Confirmation',
-                text: `Hi ${user.firstName}! \n\n
+                text: `Hi ${user.userName}! \n\n
                 Your password has been successfully reset. You can now login with your new password.`
               }
 
