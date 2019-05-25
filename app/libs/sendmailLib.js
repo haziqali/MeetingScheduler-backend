@@ -6,7 +6,7 @@ const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const response = require('./../libs/responseLib');
 
-const url = 'http://localhost:4200';
+const url = 'http://themeetingscheduler.tk';
 
 let smtpTransport = nodemailer.createTransport({
     host: 'smtp.mail.yahoo.com',
